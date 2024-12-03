@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.form-group {
+    margin: 15px 0;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+button {
+    background: #007BFF;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Password Generator</h1>
+        <div class="form-group">
+            <label for="strength">Password Strength:</label>
+            <select id="strength">
+                <option value="weak">Weak</option>
+                <option value="average">Average</option>
+                <option value="strong">Strong</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="length">Password Length:</label>
+            <input type="number" id="length" value="12" min="4" max="32">
+        </div>
+        <div class="form-group">
+            <button id="generateBtn">Generate Password</button>
+        </div>
+        <div class="form-group">
+            <input type="text" id="passwordOutput" readonly>
+            <button id="copyBtn">Copy</button>
+        </div>
+    </div>
+    <script>
+        document.getElementById("generateBtn").addEventListener("click", () => {
+    const strength = document.getElementById("strength").value;
+    const length = parseInt(document.getElementById("length").value, 10);
+
+    fetch("/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ strength, length }),
+    })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("passwordOutput").value = data.password;
+        })
+        .catch(error => console.error("Error:", error));
+});
+
+document.getElementById("copyBtn").addEventListener("click", () => {
+    const passwordField = document.getElementById("passwordOutput");
+    passwordField.select();
+    document.execCommand("copy");
+    alert("Password copied to clipboard!");
+});
+
+
+
+    </script>
+</body>
+</html>
